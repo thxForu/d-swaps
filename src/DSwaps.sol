@@ -11,9 +11,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract DSwaps is IDSwaps, Ownable {
     address public immutable FACTORY; // V3 Factory
     address public immutable SWAP_ROUTER; // V3 Swap router
-    
-    uint256 public override feePercent;
-    address public override feeCollector;
+
+    uint256 public feePercent;
+    address public feeCollector;
     uint256 public constant MAX_FEE = 1000;
     uint256 public constant MAX_DEADLINE = 300;
 

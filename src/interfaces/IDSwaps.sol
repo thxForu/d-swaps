@@ -14,14 +14,9 @@ interface IDSwaps {
     event FeeUpdated(uint256 newFeePercent);
     event FeeCollectorUpdated(address newFeeCollector);
 
-    function swap(
-        address tokenIn,
-        address tokenOut,
-        uint24 fee,
-        uint256 amountIn,
-        uint256 amountOutMin
-    ) external returns (uint256 amountOut);
-
+    function swap(address tokenIn, address tokenOut, uint24 fee, uint256 amountIn, uint256 amountOutMin)
+        external
+        returns (uint256 amountOut);
 
     function setFeePercent(uint256 _feePercent) external;
 

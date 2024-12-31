@@ -55,7 +55,12 @@ contract DSwaps is IDSwaps, Ownable {
 
         IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn);
 
-        IERC20(tokenIn).approve(SWAP_ROUTER, amountIn);
+        uint256 feeAmount = (amountIn * feePercent) / 10000;
+        uint256 amountToSwap = amountIn - feeAmount;
+
+        IERC20(tokenIn).transfer(feeCollector, feeAmount);
+
+        IERC20(tokenIn).approve(SWAP_ROUTER, amountToSwap);
 
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
             tokenIn: tokenIn,
@@ -63,7 +68,7 @@ contract DSwaps is IDSwaps, Ownable {
             fee: fee,
             recipient: msg.sender,
             deadline: block.timestamp + MAX_DEADLINE,
-            amountIn: amountIn,
+            amountIn: amountToSwap,
             amountOutMinimum: amountOutMin,
             sqrtPriceLimitX96: 0
         });
@@ -80,8 +85,7 @@ contract DSwaps is IDSwaps, Ownable {
 
         IERC20(tokenIn).approve(SWAP_ROUTER, 0);
 
-        emit Swapped(msg.sender, tokenIn, tokenOut, amountIn, amountOut);
-
+        emit Swapped(msg.sender, tokenIn, tokenOut, amountIn, amountOut, feeAmount);
         return amountOut;
     }
 

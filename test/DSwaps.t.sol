@@ -56,10 +56,14 @@ contract DSwapsTest is Test {
         uint256 amountIn = 1 ether;
         uint256 minOut = 1500 * 1e6; // min 1500 USDC
 
+        uint256 expectedFee = (amountIn * dswaps.feePercent()) / 10000;
+        uint256 amountToSwap = amountIn - expectedFee;
+
         // setup before swap
         vm.startPrank(user);
         uint256 wethBefore = IERC20(WETH).balanceOf(user);
         uint256 usdcBefore = IERC20(USDC).balanceOf(user);
+        uint256 feeCollectorWethBefore = IERC20(WETH).balanceOf(dswaps.feeCollector());
 
         // do swap
         uint256 amountOut = dswaps.swap(WETH, USDC, POOL_FEE, amountIn, minOut);
@@ -69,7 +73,17 @@ contract DSwapsTest is Test {
         assertGt(amountOut, minOut, "output less than minimum");
         assertEq(IERC20(USDC).balanceOf(user), usdcBefore + amountOut, "incorrect USDC balance");
 
-        // TODO: check fee collector got fee
+        assertEq(
+            IERC20(WETH).balanceOf(dswaps.feeCollector()),
+            feeCollectorWethBefore + expectedFee,
+            "fee collector did not receive correct fee"
+        );
+        
+        assertGt(amountOut, minOut, "output less than minimum");
+
+        assertEq(IERC20(WETH).balanceOf(address(dswaps)), 0, "contract should not hold any WETH");
+        assertEq(IERC20(USDC).balanceOf(address(dswaps)), 0, "contract should not hold any USDC");
+
         vm.stopPrank();
     }
 

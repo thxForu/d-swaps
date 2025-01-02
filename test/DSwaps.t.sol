@@ -78,7 +78,7 @@ contract DSwapsTest is Test {
             feeCollectorWethBefore + expectedFee,
             "fee collector did not receive correct fee"
         );
-        
+
         assertGt(amountOut, minOut, "output less than minimum");
 
         assertEq(IERC20(WETH).balanceOf(address(dswaps)), 0, "contract should not hold any WETH");

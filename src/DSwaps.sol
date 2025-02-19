@@ -287,7 +287,7 @@ contract DSwaps is IDSwaps, Ownable {
         }
 
         if (wrappedAmount < nativeAmountMin) {
-            // If slippage too high, return wrapped tokens to sender 
+            // If slippage too high, return wrapped tokens to sender
             // TODO: check and remove becouse of revert
             IERC20(WRAPPED_NATIVE).transfer(msg.sender, wrappedAmount);
             revert DSwaps__SlippageError();
